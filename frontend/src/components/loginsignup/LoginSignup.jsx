@@ -1,6 +1,7 @@
 
 
-import React, { useState } from 'react' //6.9k (gzipped: 2.7k)
+
+import React, { useState } from 'react' 
 import './LoginSignup.css'
 import { useNavigate } from 'react-router-dom';
 
@@ -15,28 +16,8 @@ const LoginSignup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  // const handleSubmit = () => {
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format check
-  //   const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/; // At least one special character
-
-  //   if (!emailRegex.test(email)) {
-  //     alert("Please enter a valid email address.");
-  //     return;
-  //   }
-
-  //   if (password.length < 6) {
-  //     alert("Password must be at least 6 characters long.");
-  //     return;
-  //   }
-
-  //   if (!specialCharRegex.test(password)) {
-  //     alert("Password must contain at least one special character.");
-  //     return;
-  //   }
-
-  //   alert(`${action === 'login' ? 'Logged in' : 'Registered'} successfully!`);
-  // }
-  const handleSubmit = () => {
+  
+const handleSubmit = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
@@ -55,11 +36,18 @@ const LoginSignup = () => {
     return;
   }
 
-  // Success
-  alert(`${action === 'login' ? 'Logged in' : 'Registered'} successfully!`);
-  navigate('/home'); // <-- Redirect to Home
+  if (action === 'Register') {
+   
+    alert("Registered successfully! Now please log in.");
+    setAction('login'); // 
+  } else {
+    
+    alert("Logged in successfully!");
+    localStorage.setItem("isLoggedIn", "true");
+    navigate('/home');
+  }
 };
-
+// const onSubmit =(data)=> console.log(data)
   return (
     
     <div>

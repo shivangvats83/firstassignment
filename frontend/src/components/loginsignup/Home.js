@@ -18,12 +18,48 @@
 
 // export default Home;
 
-import React from 'react';
+// import React from 'react';
 
-function Home(){
-    return(
-        <h2 style={{textAlign:'center'}}>Welcome to Job Portal Application!!!</h2>
-    )
-}
+// function Home(){
+//     return(
+//         <h2 style={{textAlign:'center'}}>Welcome to Job Portal Application!!!</h2>
+//     )
+// }
+
+// export default Home;
+import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
+
+const Home = () => {
+  const navigate = useNavigate(); 
+
+  const handleLogout = () => {
+
+    navigate('/'); 
+  };
+
+  return (
+    <div style={{ textAlign: 'center', marginTop: '100px' }}>
+      <h1>Welcome to the Home Page!</h1>
+      <p>You are successfully logged in.</p>
+
+      <button
+        onClick={handleLogout}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          cursor: 'pointer',
+          backgroundColor: '#e63946',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px'
+        }}
+      >
+        Logout
+      </button>
+    </div>
+  );
+};
 
 export default Home;
