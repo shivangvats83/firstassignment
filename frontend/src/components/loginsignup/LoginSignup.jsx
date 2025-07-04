@@ -1,14 +1,11 @@
 
-
-
-import React, { useState } from 'react' 
-import './LoginSignup.css'
+import React, { useState } from 'react';
+import './LoginSignup.css';
 import { useNavigate } from 'react-router-dom';
 
-
-import EmailIcon from '../Assets/email.png'
-import PasswordIcon from '../Assets/password.png'
-import PersonIcon from '../Assets/person.png'
+import EmailIcon from '../Assets/email.png';
+import PasswordIcon from '../Assets/password.png';
+import PersonIcon from '../Assets/person.png';
 
 const LoginSignup = () => {
   const [action, setAction] = useState("login");
@@ -16,86 +13,109 @@ const LoginSignup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  
-const handleSubmit = () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-  if (!emailRegex.test(email)) {
-    alert("Please enter a valid email address.");
-    return;
-  }
+  const handleSubmit = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-  if (password.length < 6) {
-    alert("Password must be at least 6 characters long.");
-    return;
-  }
+    if (!emailRegex.test(email)) return alert("Invalid email.");
+    if (password.length < 4) return alert("Password too short.");
+    if (!specialCharRegex.test(password)) return alert("Password needs a special character.");
 
-  if (!specialCharRegex.test(password)) {
-    alert("Password must contain at least one special character.");
-    return;
-  }
+    const payload = { email, password };
+    if (action === 'signup') {
+      if (!name || name.length < 3) return alert("Name must be at least 3 characters.");
+      payload.name = name;
+    }
 
-  if (action === 'Register') {
-   
-    alert("Registered successfully! Now please log in.");
-    setAction('login'); // 
-  } else {
-    
-    alert("Logged in successfully!");
-    localStorage.setItem("isLoggedIn", "true");
-    navigate('/home');
-  }
-};
-// const onSubmit =(data)=> console.log(data)
+    console.log("Sending payload:", payload);
+
+    try {
+      const response = await fetch(`http://localhost:8000/auth/${action}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "Something went wrong");
+
+      if (action === "signup") {
+        alert("Signup successful! Please log in.");
+        setAction("login");
+      } else {
+        localStorage.setItem("token", data.jwtToken);
+        alert("Login successful!");
+        navigate("/home");
+      }
+
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
   return (
-    
     <div>
       <div className="container">
         <div className="header">
-          <div className="text" >{action}</div>
+          <div className="text">{action}</div>
           <div className="underline"></div>
         </div>
 
         <div className="inputs">
           {action === "login" ? null : (
             <div className="input">
-              <img src={PersonIcon} alt="" />
+              <img src={PersonIcon} alt="person" />
               <input
                 type="text"
                 placeholder="Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)} 
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
           )}
-            {/* <div className="inputs">
-              {action === "login"? <div></div> : <div className="input">
-          <img src={PersonIcon} alt="" />
-          <input type="text" placeholder="Name" />
-        </div>} */}
-       
-        <div className="input">
-          <img src={EmailIcon} alt="email icon" />
-          <input type="email" placeholder="Email" value = {email}  onChange={(e) => setEmail(e.target.value)}/>
+
+          <div className="input">
+            <img src={EmailIcon} alt="email" />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="input">
+            <img src={PasswordIcon} alt="password" />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="input">
-          <img src={PasswordIcon} alt="password" />
-          <input type="password" placeholder='Password' value = {password} onChange={(e) => setPassword(e.target.value)} />
+
+        {action === "signup" ? null : (
+          <div className="forgot-password">Lost password? <span>Click here</span></div>
+        )}
+
+        <div className="submit-container">
+          <div className={action === "signup" ? "submit gray" : "submit"} onClick={() => setAction("signup")}>
+            Sign Up
+          </div>
+          <div className={action === "login" ? "submit gray" : "submit"} onClick={() => setAction("login")}>
+            Login
+          </div>
         </div>
-      </div>
-      {action === "Register" ? <div></div> : <div className="forgot-password">Lost password? <span>Click here</span></div>}
-        
-      <div className="submit-container">
-        <div className={action === "Register" ? "submit gray" : "submit"} onClick={() => { setAction("Register") }}>Register</div>
-        <div className={action === "login" ? "submit gray" : "submit"} onClick={() => { setAction("login") }}>login</div>
-      </div>
-      <div className="submit" onClick={handleSubmit}>
+
+        <div className="submit" onClick={handleSubmit}>
           Submit
         </div>
-    </div>
+      </div>
     </div>
   );
-}
+};
 
 export default LoginSignup;

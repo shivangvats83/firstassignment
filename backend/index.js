@@ -9,7 +9,7 @@ const productrouter = require('./router/productrouter');
 
 require('dotenv').config();
 require('./models/db');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 app.get('/ping', (_req, res) => {
     res.send('PONG');
