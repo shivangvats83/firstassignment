@@ -1,16 +1,7 @@
-// import logo from './logo.svg';
+import Checkout from './components/Checkout';
+// ...
+<Route path="/checkout" element={<Checkout />} />
 
-// import './App.css';
-// import LoginSignup from './components/loginsignup/LoginSignup.jsx';
-// function App() {
-//   return (
-//     <div className="login-signup">
-//       <LoginSignup />
-//     </div>
-//   );
-// }
-
-// export default App;
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';

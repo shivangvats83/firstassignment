@@ -1,7 +1,5 @@
-// const productRouter = require('./routes/productrouter');
-// app.use('/products', productRouter); // Example usage
 
-// const router = require('experss').Router();
+
 const router = require('express').Router(); 
 
 router.get('/', (_req , res) => {

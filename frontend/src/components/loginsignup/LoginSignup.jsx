@@ -1,7 +1,8 @@
-
 import React, { useState } from 'react';
 import './LoginSignup.css';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 import EmailIcon from '../Assets/email.png';
 import PasswordIcon from '../Assets/password.png';
@@ -28,8 +29,6 @@ const LoginSignup = () => {
       payload.name = name;
     }
 
-    console.log("Sending payload:", payload);
-
     try {
       const response = await fetch(`http://localhost:8000/auth/${action}`, {
         method: "POST",
@@ -54,6 +53,34 @@ const LoginSignup = () => {
       alert("Error: " + err.message);
     }
   };
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log("Google user:", decoded);
+
+      const response = await fetch("http://localhost:8000/auth/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: decoded.email, name: decoded.name, picture: decoded.picture })
+      });
+
+      const data = await response.json();
+
+      if (data && data.success) {
+        alert("Google login successful!");
+        localStorage.setItem("token", data.jwtToken);
+        navigate("/home");
+      } else {
+        alert("Google login failed.");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      alert("Error during Google login.");
+    }
+  };
+
+
 
   return (
     <div>
@@ -102,16 +129,19 @@ const LoginSignup = () => {
         )}
 
         <div className="submit-container">
-          <div className={action === "signup" ? "submit gray" : "submit"} onClick={() => setAction("signup")}>
-            Sign Up
-          </div>
-          <div className={action === "login" ? "submit gray" : "submit"} onClick={() => setAction("login")}>
-            Login
-          </div>
+          <div className={action === "signup" ? "submit gray" : "submit"} onClick={() => setAction("signup")}>Sign Up</div>
+          <div className={action === "login" ? "submit gray" : "submit"} onClick={() => setAction("login")}>Login</div>
         </div>
 
-        <div className="submit" onClick={handleSubmit}>
-          Submit
+        <div className="submit" onClick={handleSubmit}>Submit</div>
+
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          <GoogleLogin
+            onSuccess={handleGoogleLogin}
+            onError={() => {
+              alert("Google Sign-In Failed");
+            }}
+          />
         </div>
       </div>
     </div>
